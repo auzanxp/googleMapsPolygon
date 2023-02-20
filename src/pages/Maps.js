@@ -46,28 +46,17 @@ const Map = () => {
     useEffect(() => {
         // Render polygons on the map
         if (map && polygons) {
-            polygons.forEach((polygon) => {
+            polygons.forEach((item) => {
                 const polygonObj = new window.google.maps.Polygon({
-                    paths: polygon.map(coord => ({ lat: coord[1], lng: coord[0] })),
+                    paths: item.map(coord => ({ lat: coord[1], lng: coord[0] })),
                     strokeColor: '#FF0000',
                     strokeOpacity: 0.8,
                     strokeWeight: 2,
                     fillColor: '#FF0000',
                     fillOpacity: 0.35,
                 });
+                console.log(item)
                 polygonObj.setMap(map);
-
-                // polygons.forEach((polygon) => {
-                //     const coordinat = polygon.map(coord => ({ lat: coord[1], lng: coord[0] }));
-                //     const polygonObj = new window.google.maps.Polygon({
-                //         paths: coordinat,
-                //         strokeColor: '#FF0000',
-                //         strokeOpacity: 0.8,
-                //         strokeWeight: 2,
-                //         fillColor: '#FF0000',
-                //         fillOpacity: 0.35,
-                //     });
-                //     polygonObj.setMap(map);
 
                 // Add click event listener to the polygon
                 window.google.maps.event.addListener(polygonObj, 'click', () => {
