@@ -1,8 +1,8 @@
-import Maps from './pages/Maaps';
+import Map from './pages/Map';
 
 function App() {
   return (
-    <Maps/>
+    <Map/>
   );
 }
 

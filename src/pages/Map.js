@@ -5,7 +5,7 @@ const Map = () => {
     const [polygons, setPolygons] = useState([]);
 
     useEffect(() => {
-        // Load the Google Maps JavaScript API script
+        // Load the Google Maps API
         const script = document.createElement('script');
         script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GMAP_API_KEY}&callback=initMap`;
         script.defer = true;
@@ -33,10 +33,6 @@ const Map = () => {
                     }),
                 });
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch polygons.');
-                }
-
                 const data = await response.json();
                 const coordinates = data.value.features
                 let geoList = [];
@@ -55,15 +51,15 @@ const Map = () => {
     useEffect(() => {
         // Render polygons on the map
         if (map && polygons) {
-            const selectedPolygons = []; // Array to hold selected polygons
+            const selectedPolygons = [];
             polygons.forEach((item) => {
                 const polygonObj = new window.google.maps.Polygon({
                     paths: item.map(coord => coord.map(v => ({lat: v[1], lng: v[0]}))),
-                    strokeColor: '#FF0000',
+                    strokeColor: '#0099ff',
                     strokeOpacity: 0.8,
                     zIndex: 1,
                     strokeWeight: 1,
-                    fillColor: '#FF0000',
+                    fillColor: '#B6D5E0',
                     fillOpacity: 0.3,
                 });
                 polygonObj.setMap(map);
@@ -71,26 +67,26 @@ const Map = () => {
                 // Add click event listener to the polygon
                 window.google.maps.event.addListener(polygonObj, 'click', () => {
                     if (selectedPolygons.includes(polygonObj)) {
-                        // Remove polygon from selectedPolygons and set color back to red
+                        // Remove polygon from selectedPolygons and set color back to beginning
                         selectedPolygons.splice(selectedPolygons.indexOf(polygonObj), 1);
+                        polygonObj.setOptions({
+                            strokeColor: '#0099ff',
+                            fillColor: '#B6D5E0',
+                        });
+                    } else {
+                        // Add polygon to selectedPolygons  
+                        selectedPolygons.push(polygonObj);
                         polygonObj.setOptions({
                             strokeColor: '#FF0000',
                             fillColor: '#FF0000',
                         });
-                    } else {
-                        // Add polygon to selectedPolygons and set color to green
-                        selectedPolygons.push(polygonObj);
-                        polygonObj.setOptions({
-                            strokeColor: '#00FF00',
-                            fillColor: '#00FF00',
-                        });
                     }
     
-                    // Loop through selectedPolygons and set color to green
+                    // Loop through selectedPolygons
                     selectedPolygons.forEach((selected) => {
                         selected.setOptions({
-                            strokeColor: '#00FF00',
-                            fillColor: '#00FF00',
+                            strokeColor: '#FF0000',
+                            fillColor: '#FF0000',
                         });
                     });
                 });
