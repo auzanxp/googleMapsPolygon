@@ -33,29 +33,30 @@ const Map = () => {
                 }),
             });
             const data = await response.json();
-            const coordinates = data.value.features
+            const coordinates = data.value.features;
+            let geoList = [];
             coordinates.forEach((feature) => {
                 const geometry = feature.geometry.coordinates[0];
-                console.log(geometry);
-                setPolygons(geometry)
+                geoList.push(geometry)
             });
+            setPolygons(geoList);
         };
         fetchPolygons();
     }, []);
-
+    
     useEffect(() => {
         // Render polygons on the map
         if (map && polygons) {
             polygons.forEach((item) => {
                 const polygonObj = new window.google.maps.Polygon({
-                    paths: item.map(coord => ({ lat: coord[1], lng: coord[0] })),
+                    paths: item.map(coord => coord.map(v => ({lat: v[1], lng: v[0]}))),
                     strokeColor: '#FF0000',
                     strokeOpacity: 0.8,
-                    strokeWeight: 2,
+                    zIndex: 1,
+                    strokeWeight: 1,
                     fillColor: '#FF0000',
-                    fillOpacity: 0.35,
+                    fillOpacity: 0.3,
                 });
-                console.log(item)
                 polygonObj.setMap(map);
 
                 // Add click event listener to the polygon
