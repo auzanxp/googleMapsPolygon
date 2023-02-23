@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 const Map = () => {
     const [map, setMap] = useState(null);
     const [polygons, setPolygons] = useState([]);
-    const [selectedPolygon, setSelectedPolygon] = useState(null);
 
     useEffect(() => {
         // Load the Google Maps JavaScript API script
@@ -56,6 +55,7 @@ const Map = () => {
     useEffect(() => {
         // Render polygons on the map
         if (map && polygons) {
+            const selectedPolygons = []; // Array to hold selected polygons
             polygons.forEach((item) => {
                 const polygonObj = new window.google.maps.Polygon({
                     paths: item.map(coord => coord.map(v => ({lat: v[1], lng: v[0]}))),
@@ -67,25 +67,37 @@ const Map = () => {
                     fillOpacity: 0.3,
                 });
                 polygonObj.setMap(map);
-
+    
                 // Add click event listener to the polygon
                 window.google.maps.event.addListener(polygonObj, 'click', () => {
-                    if (selectedPolygon) {
-                        selectedPolygon.setOptions({
+                    if (selectedPolygons.includes(polygonObj)) {
+                        // Remove polygon from selectedPolygons and set color back to red
+                        selectedPolygons.splice(selectedPolygons.indexOf(polygonObj), 1);
+                        polygonObj.setOptions({
                             strokeColor: '#FF0000',
                             fillColor: '#FF0000',
                         });
+                    } else {
+                        // Add polygon to selectedPolygons and set color to green
+                        selectedPolygons.push(polygonObj);
+                        polygonObj.setOptions({
+                            strokeColor: '#00FF00',
+                            fillColor: '#00FF00',
+                        });
                     }
-                    setSelectedPolygon(polygonObj);
-                    polygonObj.setOptions({
-                        strokeColor: '#00FF00',
-                        fillColor: '#00FF00',
+    
+                    // Loop through selectedPolygons and set color to green
+                    selectedPolygons.forEach((selected) => {
+                        selected.setOptions({
+                            strokeColor: '#00FF00',
+                            fillColor: '#00FF00',
+                        });
                     });
                 });
             });
         }
-    }, [map, polygons, selectedPolygon]);
-
+    }, [map, polygons]);
+    
     return <div id="map" style={{ height: '100vh', width: '100%' }} />;
 };
 
